@@ -21,7 +21,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.MenuItem;
-import hashengineering.digitalcoin.wallet.R;
+import cc.trumpcoin.wallet.R;
 
 /**
  * @author Andreas Schildbach

@@ -52,7 +52,7 @@ import de.schildbach.wallet.util.PaymentProtocol;
 import de.schildbach.wallet.util.Qr;
 
 import com.google.bitcoin.core.CoinDefinition;
-import hashengineering.digitalcoin.wallet.R;
+import cc.trumpcoin.wallet.R;
 
 
 /**
@@ -120,7 +120,7 @@ public abstract class InputParser
 				{
 					log.info("got invalid bitcoin uri: '" + input + "'", x);
 
-					error(R.string.input_parser_invalid_bitcoin_uri, input);
+					error(R.string.input_parser_invalid_digitalcoin_uri, input);
 				}
 			}
 			else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches())

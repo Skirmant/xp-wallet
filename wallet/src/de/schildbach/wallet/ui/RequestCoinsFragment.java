@@ -73,7 +73,7 @@ import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.Nfc;
 import de.schildbach.wallet.util.PaymentProtocol;
 import de.schildbach.wallet.util.Qr;
-import hashengineering.digitalcoin.wallet.R;
+import cc.trumpcoin.wallet.R;
 
 /**
  * @author Andreas Schildbach
