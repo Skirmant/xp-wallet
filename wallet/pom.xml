@@ -6,7 +6,7 @@
 
 	<artifactId>wallet</artifactId>
 	<packaging>apk</packaging>
-	<version>0.2.0</version>
+	<version>0.2.2</version>
 	<name>TrumpCoin Wallet</name>
 
 

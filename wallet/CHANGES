@@ -1,3 +1,12 @@
+TrumpCoin Wallet
+-----------------
+v0.2.2
+*fixed private key sweeping
+*updated checkpoints
+
+v0.2.1
+*switched to TrumpCoin
+
 digitalcoin Wallet
 -----------------
 v0.2.1-beta
