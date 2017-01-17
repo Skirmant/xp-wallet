@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.schildbach.wallet.ui.send;
 
 import java.io.BufferedInputStream;
@@ -23,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,92 +53,86 @@ import cc.trumpcoin.wallet.R;
 /**
  * @author Andreas Schildbach
  */
-public final class RequestWalletBalanceTask
-{
-	private final Handler backgroundHandler;
-	private final Handler callbackHandler;
-	private final ResultCallback resultCallback;
-	@CheckForNull
-	private final String userAgent;
+public final class RequestWalletBalanceTask {
+    private final Handler backgroundHandler;
+    private final Handler callbackHandler;
+    private final ResultCallback resultCallback;
+    @CheckForNull
+    private final String userAgent;
 
-	private static final Logger log = LoggerFactory.getLogger(RequestWalletBalanceTask.class);
+    private static final Logger log = LoggerFactory.getLogger(RequestWalletBalanceTask.class);
 
-	private final BaseEncoding HEX = BaseEncoding.base16().lowerCase();
+    private final BaseEncoding HEX = BaseEncoding.base16().lowerCase();
 
-	public interface ResultCallback
-	{
-		void onResult(Collection<Transaction> transactions);
+    public interface ResultCallback {
+        void onResult(Collection < Transaction > transactions);
 
-		void onFail(int messageResId, Object... messageArgs);
-	}
+        void onFail(int messageResId, Object...messageArgs);
+    }
 
-	public RequestWalletBalanceTask(@Nonnull final Handler backgroundHandler, @Nonnull final ResultCallback resultCallback,
-			@Nullable final String userAgent)
-	{
-		this.backgroundHandler = backgroundHandler;
-		this.callbackHandler = new Handler(Looper.myLooper());
-		this.resultCallback = resultCallback;
-		this.userAgent = userAgent;
-	}
+    public RequestWalletBalanceTask(@Nonnull final Handler backgroundHandler, @Nonnull final ResultCallback resultCallback,
+        @Nullable final String userAgent) {
+        this.backgroundHandler = backgroundHandler;
+        this.callbackHandler = new Handler(Looper.myLooper());
+        this.resultCallback = resultCallback;
+        this.userAgent = userAgent;
+    }
 
-	public void requestWalletBalance(final Address... addresses)
-	{
-		backgroundHandler.post(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				final StringBuilder url = new StringBuilder(Constants.BITEASY_API_URL);
-                if(CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr)
-                {
-                    url.append("unspent-outputs");
-				    url.append("?per_page=MAX");
-				    for (final Address address : addresses)
-					    url.append("&address[]=").append(address.toString());
-                }
-                else
-                {
+    public void requestWalletBalance(final Address...addresses) {
+        backgroundHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                final StringBuilder url = new StringBuilder(CoinDefinition.UNSPENT_API_URL); //Constants.BITEASY_API_URL);
+                if (CoinDefinition.UnspentAPI == CoinDefinition.UnspentAPIType.cryptoID) {
+                    url.append("&active=");
+
                     int i = 0;
-                    for (final Address address : addresses)
-                    {
-                        if(i != 0)
+                    for (final Address address: addresses) {
+                        if (i++ != 0) url.append("|");
+
+                        url.append(address.toString());
+                    }
+                } else if (CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr) {
+                    url.append("unspent-outputs");
+                    url.append("?per_page=MAX");
+                    for (final Address address: addresses)
+                        url.append("&address[]=").append(address.toString());
+                } else {
+                    int i = 0;
+                    for (final Address address: addresses) {
+                        if (i != 0)
                             url.append(",");
                         url.append(address.toString());
                         i++;
                     }
                 }
-				log.debug("trying to request wallet balance from {}", url);
+                log.debug("trying to request wallet balance from {}", url);
 
-				HttpURLConnection connection = null;
-				Reader reader = null;
+                HttpURLConnection connection = null;
+                Reader reader = null;
 
-				try
-				{
-					connection = (HttpURLConnection) new URL(url.toString()).openConnection();
+                try {
+                    connection = (HttpURLConnection) new URL(url.toString()).openConnection();
+                    connection.setInstanceFollowRedirects(false);
+                    connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
+                    connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
+                    connection.setUseCaches(false);
+                    connection.setDoInput(true);
+                    connection.setDoOutput(false);
+                    connection.setRequestMethod("GET");
+                    if (userAgent != null) connection.addRequestProperty("User-Agent", userAgent);
+                    connection.connect();
 
-					connection.setInstanceFollowRedirects(false);
-					connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
-					connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
-					connection.setUseCaches(false);
-					connection.setDoInput(true);
-					connection.setDoOutput(false);
+                    final int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024), Charsets.UTF_8);
+                        final StringBuilder content = new StringBuilder();
+                        Io.copy(reader, content);
 
-					connection.setRequestMethod("GET");
-					if (userAgent != null)
-						connection.addRequestProperty("User-Agent", userAgent);
-					connection.connect();
-
-					final int responseCode = connection.getResponseCode();
-					if (responseCode == HttpURLConnection.HTTP_OK)
-					{
-						reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024), Charsets.UTF_8);
-						final StringBuilder content = new StringBuilder();
-						Io.copy(reader, content);
-
-						final JSONObject json = new JSONObject(content.toString());
+                        final JSONObject json = new JSONObject(content.toString());
                         JSONArray jsonOutputs = null;
-                        if(CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr)
-                        {
+                        if (CoinDefinition.UnspentAPI == CoinDefinition.UnspentAPIType.cryptoID) jsonOutputs = json.getJSONArray("unspent_outputs");
+                        else if (CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr) {
                             final int status = json.getInt("status");
                             if (status != 200)
                                 throw new IOException("api status " + status + " when fetching unspent outputs");
@@ -151,9 +145,7 @@ public final class RequestWalletBalanceTask
                                 throw new IllegalStateException("result set too big");
 
                             jsonOutputs = jsonData.getJSONArray("outputs");
-                        }
-                        else
-                        {
+                        } else {
                             String success = json.getString("status");
 
                             if (!success.equals(success))
@@ -163,140 +155,155 @@ public final class RequestWalletBalanceTask
                             jsonOutputs = dataJson.getJSONArray("unspent");
                         }
 
-						final Map<Sha256Hash, Transaction> transactions = new HashMap<Sha256Hash, Transaction>(jsonOutputs.length());
+                        final Map < Sha256Hash, Transaction > transactions = new HashMap < Sha256Hash, Transaction > (jsonOutputs.length());
 
-						for (int i = 0; i < jsonOutputs.length(); i++)
-						{
-							final JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
+                        for (int i = 0; i < jsonOutputs.length(); i++) {
+                            final JSONObject jsonOutput = jsonOutputs.getJSONObject(i);
 
                             Sha256Hash uxtoHash = null;
                             int uxtoIndex = 0;
                             byte[] uxtoScriptBytes = null;
                             BigInteger uxtoValue = null;
 
-                            if(CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr)
-                            {
+                            if (CoinDefinition.UnspentAPI == CoinDefinition.UnspentAPIType.cryptoID) {
+                                uxtoHash = new Sha256Hash(jsonOutput.getString("tx_hash"));
+                                uxtoIndex = jsonOutput.getInt("tx_ouput_n");
+                                uxtoValue = new BigInteger(jsonOutput.getString("value"));
+
+                                HttpURLConnection conn = (HttpURLConnection) new URL("https://chainz.cryptoid.info/trump/api.dws?key=6dd34c6187c1&q=txinfo&t=" + jsonOutput.getString("tx_hash")).openConnection();
+                                conn.setInstanceFollowRedirects(false);
+                                conn.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
+                                conn.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
+                                conn.setUseCaches(false);
+                                conn.setDoInput(true);
+                                conn.setDoOutput(false);
+                                conn.setRequestMethod("GET");
+                                if (userAgent != null) conn.addRequestProperty("User-Agent", userAgent);
+                                conn.connect();
+
+                                int res = conn.getResponseCode();
+                                if (res != HttpURLConnection.HTTP_OK) {
+                                    final String msg = conn.getResponseMessage();
+                                    log.info("got http error '{}: {}'", res, msg);
+                                    onFail(R.string.error_http, res, msg);
+                                    return;
+                                }
+
+                                reader = new InputStreamReader(new BufferedInputStream(conn.getInputStream(), 1024), Charsets.UTF_8);
+                                final StringBuilder j = new StringBuilder();
+                                Io.copy(reader, j);
+
+                                JSONObject obj = new JSONObject(j.toString());
+                                JSONArray arr = obj.getJSONArray("outputs");
+                                for (int k = 0; k < arr.length(); k++) {
+                                    obj = arr.getJSONObject(k);
+                                    String addr = obj.getString("addr");
+
+                                    if (!addr.equals(addresses[0].toString())) continue;
+
+                                    uxtoScriptBytes = HEX.decode(obj.getString("script"));
+                                    break;
+                                }
+
+                                log.info("found UXTO {} {}", uxtoHash, uxtoValue);
+                            } else if (CoinDefinition.UnspentAPI != CoinDefinition.UnspentAPIType.Blockr) {
                                 if (jsonOutput.getInt("is_spent") != 0)
                                     throw new IllegalStateException("UXTO not spent");
                                 uxtoHash = new Sha256Hash(jsonOutput.getString("transaction_hash"));
                                 uxtoIndex = jsonOutput.getInt("transaction_index");
                                 uxtoScriptBytes = HEX.decode(jsonOutput.getString("script_pub_key"));
                                 uxtoValue = new BigInteger(jsonOutput.getString("value"));
-                            }
-                            else
-                            {
+                            } else {
                                 uxtoHash = new Sha256Hash(jsonOutput.getString("tx"));
                                 uxtoIndex = jsonOutput.getInt("n");
                                 uxtoScriptBytes = HEX.decode(jsonOutput.getString("script"));
-                                uxtoValue = BigInteger.valueOf((long)(Double.parseDouble(String.format("%.08f", jsonOutput.getDouble("amount")).replace(",", ".")) *100000000));
+                                uxtoValue = BigInteger.valueOf((long)(Double.parseDouble(String.format("%.08f", jsonOutput.getDouble("amount")).replace(",", ".")) * 100000000));
                                 //jsonOutput.getInt("confirmations");
                             }
 
-							Transaction tx = transactions.get(uxtoHash);
-							if (tx == null)
-							{
-								tx = new FakeTransaction(Constants.NETWORK_PARAMETERS, uxtoHash);
-								tx.getConfidence().setConfidenceType(ConfidenceType.BUILDING);
-								transactions.put(uxtoHash, tx);
-							}
+                            Transaction tx = transactions.get(uxtoHash);
+                            if (tx == null) {
+                                tx = new FakeTransaction(Constants.NETWORK_PARAMETERS, uxtoHash);
+                                tx.getConfidence().setConfidenceType(ConfidenceType.BUILDING);
+                                transactions.put(uxtoHash, tx);
+                            }
 
-							if (tx.getOutputs().size() > uxtoIndex)
-								throw new IllegalStateException("cannot reach index " + uxtoIndex + ", tx already has " + tx.getOutputs().size()
-										+ " outputs");
+                            if (tx.getOutputs().size() > uxtoIndex)
+                                throw new IllegalStateException("cannot reach index " + uxtoIndex + ", tx already has " + tx.getOutputs().size() +
+                                    " outputs");
 
-							// fill with dummies
-							while (tx.getOutputs().size() < uxtoIndex)
-								tx.addOutput(new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, Utils.NEGATIVE_ONE, new byte[] {}));
+                            // fill with dummies
+                            while (tx.getOutputs().size() < uxtoIndex)
+                                tx.addOutput(new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, Utils.NEGATIVE_ONE, new byte[] {}));
 
-							// add the real output
-							final TransactionOutput output = new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, uxtoValue, uxtoScriptBytes);
-							tx.addOutput(output);
-						}
+                            // add the real output
+                            final TransactionOutput output = new TransactionOutput(Constants.NETWORK_PARAMETERS, tx, uxtoValue, uxtoScriptBytes);
+                            tx.addOutput(output);
+                        }
 
-						log.info("fetched unspent outputs from {}", url);
+                        log.info("fetched unspent outputs from {}", url);
 
-						onResult(transactions.values());
-					}
-					else
-					{
-						final String responseMessage = connection.getResponseMessage();
+                        onResult(transactions.values());
+                    } else {
+                        final String responseMessage = connection.getResponseMessage();
 
-						log.info("got http error '{}: {}' from {}", responseCode, responseMessage, url);
+                        log.info("got http error '{}: {}' from {}", responseCode, responseMessage, url);
 
-						onFail(R.string.error_http, responseCode, responseMessage);
-					}
-				}
-				catch (final JSONException x)
-				{
-					log.info("problem parsing json from " + url, x);
+                        onFail(R.string.error_http, responseCode, responseMessage);
+                    }
+                } catch (final JSONException x) {
+                    log.info("problem parsing json from " + url, x);
 
-					onFail(R.string.error_parse, x.getMessage());
-				}
-				catch (final IOException x)
-				{
-					log.info("problem querying unspent outputs from " + url, x);
+                    onFail(R.string.error_parse, x.getMessage());
+                } catch (final IOException x) {
+                    log.info("problem querying unspent outputs from " + url, x);
 
-					onFail(R.string.error_io, x.getMessage());
-				}
-				finally
-				{
-					if (reader != null)
-					{
-						try
-						{
-							reader.close();
-						}
-						catch (final IOException x)
-						{
-							// swallow
-						}
-					}
+                    onFail(R.string.error_io, x.getMessage());
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException x) {
+                            // swallow
+                        }
+                    }
 
-					if (connection != null)
-						connection.disconnect();
-				}
-			}
-		});
-	}
+                    if (connection != null)
+                        connection.disconnect();
+                }
+            }
+        });
+    }
 
-	protected void onResult(final Collection<Transaction> transactions)
-	{
-		callbackHandler.post(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				resultCallback.onResult(transactions);
-			}
-		});
-	}
+    protected void onResult(final Collection < Transaction > transactions) {
+        callbackHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                resultCallback.onResult(transactions);
+            }
+        });
+    }
 
-	protected void onFail(final int messageResId, final Object... messageArgs)
-	{
-		callbackHandler.post(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				resultCallback.onFail(messageResId, messageArgs);
-			}
-		});
-	}
+    protected void onFail(final int messageResId, final Object...messageArgs) {
+        callbackHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                resultCallback.onFail(messageResId, messageArgs);
+            }
+        });
+    }
 
-	private static class FakeTransaction extends Transaction
-	{
-		private final Sha256Hash hash;
+    private static class FakeTransaction extends Transaction {
+        private final Sha256Hash hash;
 
-		public FakeTransaction(final NetworkParameters params, final Sha256Hash hash)
-		{
-			super(params, 1, hash);
-			this.hash = hash;
-		}
+        public FakeTransaction(final NetworkParameters params, final Sha256Hash hash) {
+            super(params, 1, hash);
+            this.hash = hash;
+        }
 
-		@Override
-		public Sha256Hash getHash()
-		{
-			return hash;
-		}
-	}
+        @Override
+        public Sha256Hash getHash() {
+            return hash;
+        }
+    }
 }
