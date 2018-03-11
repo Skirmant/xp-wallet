@@ -50,7 +50,7 @@ import de.schildbach.wallet.ExchangeRatesProvider.ExchangeRate;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.service.BlockchainService;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -224,7 +224,7 @@ public final class WalletBalanceFragment extends Fragment
 				viewBalanceBtc.setVisibility(View.VISIBLE);
 				viewBalanceBtc.setPrecision(config.getBtcPrecision(), config.getBtcShift());
 				viewBalanceBtc.setPrefix(config.getBtcPrefix());
-				viewBalanceBtc.setAmount(balance);
+				viewBalanceBtc.setAmount(balance.multiply(new BigInteger("100")));
 
 				if (showLocalBalance)
 				{

@@ -7,11 +7,11 @@
 			android:title="@string/about_version_title" />
 		<Preference
 
-			android:summary="© 2011-2014, Andreas Schildbach\n© 2013-2014, HashEngineering Solutions\n© 2016-2017, A guy from /biz/"
+			android:summary="© 2011-2014, Andreas Schildbach\n© 2013-2014, HashEngineering Solutions\n© 2017, Skirmantas V. Šaknys"
 			android:title="@string/about_copyright_title" />
         <Preference
                 android:summary="Version 1.1 (v1.0.1.0-g3aaa7ba-beta) and above"
-                android:title="TrumpCoin Compatibility" />
+                android:title="XP Compatibility" />
 
 		<Preference
 			android:key="about_license"

@@ -29,7 +29,7 @@ import com.actionbarsherlock.view.MenuItem;
 import de.schildbach.wallet.data.PaymentIntent;
 import de.schildbach.wallet.ui.AbstractBindServiceActivity;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

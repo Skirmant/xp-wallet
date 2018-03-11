@@ -57,7 +57,7 @@ import de.schildbach.wallet.service.BlockchainService;
 import de.schildbach.wallet.service.BlockchainServiceImpl;
 
 import de.schildbach.wallet.util.WholeStringBuilder;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

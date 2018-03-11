@@ -37,7 +37,7 @@ import de.schildbach.wallet.Constants;
  */
 public class GenericUtils
 {
-	public static final BigInteger ONE_BTC = new BigInteger("100000000", 10);
+	public static final BigInteger ONE_BTC  = new BigInteger("100000000", 10);
 	public static final BigInteger ONE_MBTC = new BigInteger("100000", 10);
 	public static final BigInteger ONE_UBTC = new BigInteger("100", 10);
 

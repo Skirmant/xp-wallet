@@ -126,7 +126,7 @@ import de.schildbach.wallet.util.GenericUtils;
 import de.schildbach.wallet.util.Nfc;
 import de.schildbach.wallet.util.PaymentProtocol;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -435,7 +435,7 @@ public final class SendCoinsFragment extends SherlockFragment
 			final String mimeType = intent.getType();
 
 			if ((Intent.ACTION_VIEW.equals(action) || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) && intentUri != null
-					&& CoinDefinition.coinURIScheme.equals(scheme))
+					&& CoinDefinition.coinURIScheme.equalsIgnoreCase(scheme))
 			{
 				initStateFromBitcoinUri(intentUri);
 			}
@@ -952,7 +952,7 @@ public final class SendCoinsFragment extends SherlockFragment
 			}
 
 			@Override
-			protected void onInsufficientMoney(@Nullable final BigInteger missing)
+			protected void onInsufficientMoney(@Nullable BigInteger missing)
 			{
 				state = State.INPUT;
 				updateView();
@@ -970,11 +970,11 @@ public final class SendCoinsFragment extends SherlockFragment
 				if (missing != null)
 					msg.append(
 							getString(R.string.send_coins_fragment_insufficient_money_msg1,
-									btcPrefix + ' ' + GenericUtils.formatValue(missing, btcPrecision, btcShift))).append("\n\n");
+									btcPrefix + ' ' + GenericUtils.formatValue(missing.multiply(new BigInteger("100")), btcPrecision, btcShift))).append("\n\n");
 				if (pending.signum() > 0)
 					msg.append(
 							getString(R.string.send_coins_fragment_pending,
-									btcPrefix + ' ' + GenericUtils.formatValue(pending, btcPrecision, btcShift))).append("\n\n");
+									btcPrefix + ' ' + GenericUtils.formatValue(pending.multiply(new BigInteger("100")), btcPrecision, btcShift))).append("\n\n");
 				msg.append(getString(R.string.send_coins_fragment_insufficient_money_msg2));
 				dialog.setMessage(msg);
 				dialog.setPositiveButton(R.string.send_coins_options_empty, new DialogInterface.OnClickListener()
@@ -1182,7 +1182,9 @@ public final class SendCoinsFragment extends SherlockFragment
 			viewCancel.setEnabled(state != State.PREPARATION);
 			viewGo.setEnabled(everythingValid());
 
-            String str = String.format("%s %s", amountCalculatorLink.hasAmount() ? GenericUtils.formatValue(CoinDefinition.DEFAULT_MIN_TX_FEE, 8, 0) : String.format("%.1f", 0f), CoinDefinition.coinTicker);
+            BigInteger i = CoinDefinition.DEFAULT_MIN_TX_FEE;
+            i = i.multiply(new BigInteger("100"));
+            String str = String.format("%s %s", amountCalculatorLink.hasAmount() ? GenericUtils.formatValue(i, 8, 0) : String.format("%.1f", 0f), CoinDefinition.coinTicker);
 
             txFeeView.setHint(str);
 

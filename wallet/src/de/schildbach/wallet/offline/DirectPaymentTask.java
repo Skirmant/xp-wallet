@@ -42,7 +42,7 @@ import android.os.Looper;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.Bluetooth;
 import de.schildbach.wallet.util.PaymentProtocol;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

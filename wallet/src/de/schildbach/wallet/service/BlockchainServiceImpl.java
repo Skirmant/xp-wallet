@@ -79,7 +79,7 @@ import de.schildbach.wallet.ui.WalletActivity;
 import de.schildbach.wallet.util.CrashReporter;
 import de.schildbach.wallet.util.GenericUtils;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 import de.schildbach.wallet.util.ThrottlingWalletChangeListener;
 import org.litecoin.LitecoinPeerDBDiscovery;
 import com.google.bitcoin.net.discovery.IrcDiscovery;
@@ -166,7 +166,7 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		}
 	};
 
-	private void notifyCoinsReceived(@Nullable final Address from, @Nonnull final BigInteger amount)
+	private void notifyCoinsReceived(@Nullable final Address from, @Nonnull BigInteger amount)
 	{
 		if (notificationCount == 1)
 			nm.cancel(NOTIFICATION_ID_COINS_RECEIVED);
@@ -184,11 +184,11 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		final String msgSuffix = packageFlavor != null ? " [" + packageFlavor + "]" : "";
 
 		final String tickerMsg = getString(R.string.notification_coins_received_msg,
-				btcPrefix + ' ' + GenericUtils.formatValue(amount, btcPrecision, btcShift))
+				btcPrefix + ' ' + GenericUtils.formatValue(amount.multiply(new BigInteger("100")), btcPrecision, btcShift))
 				+ msgSuffix;
 
 		final String msg = getString(R.string.notification_coins_received_msg,
-				btcPrefix + ' ' + GenericUtils.formatValue(notificationAccumulatedAmount, btcPrecision, btcShift))
+				btcPrefix + ' ' + GenericUtils.formatValue(notificationAccumulatedAmount.multiply(new BigInteger("100")), btcPrecision, btcShift))
 				+ msgSuffix;
 
 		final StringBuilder text = new StringBuilder();

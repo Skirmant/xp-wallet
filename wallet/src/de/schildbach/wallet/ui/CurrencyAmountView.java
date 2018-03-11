@@ -47,7 +47,7 @@ import com.google.bitcoin.core.Transaction;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.GenericUtils;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -200,19 +200,19 @@ public final class CurrencyAmountView extends FrameLayout
 	public BigInteger getAmount()
 	{
 		if (isValidAmount(false))
-			return GenericUtils.parseCoin(textView.getText().toString().trim(), shift);
+	              return GenericUtils.parseCoin(textView.getText().toString().trim(), shift).divide(new BigInteger("100"));
 		else
 			return null;
 	}
 
-	public void setAmount(@Nullable final BigInteger amount, final boolean fireListener)
+	public void setAmount(@Nullable BigInteger amount, final boolean fireListener)
 	{
 		if (!fireListener)
 			textViewListener.setFire(false);
 
-		if (amount != null)
+		if (amount != null) {amount = amount.multiply(new BigInteger("100"));
 			textView.setText(amountSigned ? GenericUtils.formatValue(amount, Constants.CURRENCY_PLUS_SIGN, Constants.CURRENCY_MINUS_SIGN,
-					inputPrecision, shift) : GenericUtils.formatValue(amount, inputPrecision, shift));
+					inputPrecision, shift) : GenericUtils.formatValue(amount, inputPrecision, shift));}
 		else
 			textView.setText(null);
 

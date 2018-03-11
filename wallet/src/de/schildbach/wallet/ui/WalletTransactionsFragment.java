@@ -27,7 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import de.schildbach.wallet.ui.TransactionsListFragment.Direction;
 import de.schildbach.wallet.util.ViewPagerTabs;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

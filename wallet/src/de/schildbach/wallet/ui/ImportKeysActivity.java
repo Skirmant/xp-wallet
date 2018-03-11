@@ -50,7 +50,7 @@ import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.Crypto;
 
 import de.schildbach.wallet.util.Io;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

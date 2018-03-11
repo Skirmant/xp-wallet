@@ -35,7 +35,7 @@ import de.schildbach.wallet.AddressBookProvider;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.WalletApplication;
 import de.schildbach.wallet.util.*;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -126,7 +126,7 @@ public final class TransactionFragment extends SherlockFragment
 
 		try
 		{
-			final BigInteger amountSent = tx.getValueSentFromMe(wallet);
+			final BigInteger amountSent = tx.getValueSentFromMe(wallet).multiply(new BigInteger("100"));
 			view.findViewById(R.id.transaction_fragment_amount_sent_row).setVisibility(amountSent.signum() != 0 ? View.VISIBLE : View.GONE);
 			if (amountSent.signum() != 0)
 			{
@@ -139,7 +139,7 @@ public final class TransactionFragment extends SherlockFragment
 			x.printStackTrace();
 		}
 
-		final BigInteger amountReceived = tx.getValueSentToMe(wallet);
+		final BigInteger amountReceived = tx.getValueSentToMe(wallet).multiply(new BigInteger("100"));
 		view.findViewById(R.id.transaction_fragment_amount_received_row).setVisibility(amountReceived.signum() != 0 ? View.VISIBLE : View.GONE);
 		if (amountReceived.signum() != 0)
 		{

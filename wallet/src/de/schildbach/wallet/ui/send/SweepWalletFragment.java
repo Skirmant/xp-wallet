@@ -54,7 +54,7 @@ import de.schildbach.wallet.ui.ScanActivity;
 import de.schildbach.wallet.ui.TransactionsListAdapter;
 import de.schildbach.wallet.util.GenericUtils;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Maximilian Keller
@@ -418,7 +418,7 @@ public class SweepWalletFragment extends SherlockFragment
 
 			balanceView.setVisibility(View.VISIBLE);
 			final SpannableStringBuilder balance = new SpannableStringBuilder(GenericUtils.formatValue(
-					walletToSweep.getBalance(BalanceType.ESTIMATED), btcPrecision, btcShift));
+					walletToSweep.getBalance(BalanceType.ESTIMATED).multiply(new BigInteger("100")), btcPrecision, btcShift));
 			WalletUtils.formatSignificant(balance, null);
 			balance.insert(0, " "); // insert backwards
 			balance.insert(0, btcPrefix);

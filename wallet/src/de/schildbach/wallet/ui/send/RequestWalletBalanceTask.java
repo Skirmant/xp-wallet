@@ -48,7 +48,7 @@ import com.google.common.io.BaseEncoding;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.Io;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -168,9 +168,9 @@ public final class RequestWalletBalanceTask {
                             if (CoinDefinition.UnspentAPI == CoinDefinition.UnspentAPIType.cryptoID) {
                                 uxtoHash = new Sha256Hash(jsonOutput.getString("tx_hash"));
                                 uxtoIndex = jsonOutput.getInt("tx_ouput_n");
-                                uxtoValue = new BigInteger(jsonOutput.getString("value"));
+                                uxtoValue = new BigInteger(jsonOutput.getString("value")).divide(new BigInteger("100"));
 
-                                HttpURLConnection conn = (HttpURLConnection) new URL("https://chainz.cryptoid.info/trump/api.dws?key=6dd34c6187c1&q=txinfo&t=" + jsonOutput.getString("tx_hash")).openConnection();
+                                HttpURLConnection conn = (HttpURLConnection) new URL("https://chainz.cryptoid.info/xp/api.dws?key=6dd34c6187c1&q=txinfo&t=" + jsonOutput.getString("tx_hash")).openConnection();
                                 conn.setInstanceFollowRedirects(false);
                                 conn.setConnectTimeout(Constants.HTTP_TIMEOUT_MS);
                                 conn.setReadTimeout(Constants.HTTP_TIMEOUT_MS);
@@ -212,12 +212,12 @@ public final class RequestWalletBalanceTask {
                                 uxtoHash = new Sha256Hash(jsonOutput.getString("transaction_hash"));
                                 uxtoIndex = jsonOutput.getInt("transaction_index");
                                 uxtoScriptBytes = HEX.decode(jsonOutput.getString("script_pub_key"));
-                                uxtoValue = new BigInteger(jsonOutput.getString("value"));
+                                uxtoValue = new BigInteger(jsonOutput.getString("value")).divide(new BigInteger("100"));
                             } else {
                                 uxtoHash = new Sha256Hash(jsonOutput.getString("tx"));
                                 uxtoIndex = jsonOutput.getInt("n");
                                 uxtoScriptBytes = HEX.decode(jsonOutput.getString("script"));
-                                uxtoValue = BigInteger.valueOf((long)(Double.parseDouble(String.format("%.08f", jsonOutput.getDouble("amount")).replace(",", ".")) * 100000000));
+                                uxtoValue = BigInteger.valueOf((long)(Double.parseDouble(String.format("%.08f", jsonOutput.getDouble("amount")).replace(",", ".")) * 100000000)).divide(new BigInteger("100"));
                                 //jsonOutput.getInt("confirmations");
                             }
 

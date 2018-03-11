@@ -51,7 +51,7 @@ import de.schildbach.wallet.AddressBookProvider;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.CircularProgressView;
 import de.schildbach.wallet.util.WalletUtils;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -316,7 +316,7 @@ public class TransactionsListAdapter extends BaseAdapter
 		else if (address != null)
 			label = resolveLabel(address.toString());
 		else
-			label = "?";
+			label = WalletUtils.getFirstToAddress(tx).toString();
 		rowAddress.setTextColor(textColor);
 		rowAddress.setText(label != null ? label : address.toString());
 		rowAddress.setTypeface(label != null ? Typeface.DEFAULT : Typeface.MONOSPACE);
@@ -326,7 +326,7 @@ public class TransactionsListAdapter extends BaseAdapter
 		rowValue.setTextColor(textColor);
 		rowValue.setAlwaysSigned(true);
 		rowValue.setPrecision(precision, shift);
-		rowValue.setAmount(value);
+		rowValue.setAmount(value.multiply(new BigInteger("100")));
 
 		// extended message
 		final View rowExtend = row.findViewById(R.id.transaction_row_extend);

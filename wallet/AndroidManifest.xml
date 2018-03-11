@@ -2,11 +2,11 @@
 <!-- Need to update this for the coin -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="cc.trumpcoin.wallet"
+	package="sk.xp.wallet"
 	android:installLocation="internalOnly"
 
-	android:versionCode="10022"
-	android:versionName="0.2.2" >
+	android:versionCode="26"
+	android:versionName="0.2.6" >
 
 
 	<uses-sdk
@@ -200,17 +200,17 @@
 
 		<provider
 			android:name="de.schildbach.wallet.AddressBookProvider"
-			android:authorities="cc.trumpcoin.wallet.address_book"
+			android:authorities="sk.xp.wallet.address_book"
 			android:exported="false" />
         <!-- Need to update this for the coin -->
 		<provider
 			android:name="de.schildbach.wallet.ExchangeRatesProvider"
-			android:authorities="cc.trumpcoin.wallet.exchange_rates"
+			android:authorities="sk.xp.wallet.exchange_rates"
 			android:exported="false" />
 
 		<receiver
 			android:name="de.schildbach.wallet.WalletBalanceWidgetProvider"
-			android:label="TrumpCoin Wallet Balance" >
+			android:label="XP Wallet Balance" >
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 			</intent-filter>

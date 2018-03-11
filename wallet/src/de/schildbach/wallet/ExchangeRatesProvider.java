@@ -273,27 +273,24 @@ public class ExchangeRatesProvider extends ContentProvider
     {
 
         //final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
-        // Keep the LTC rate around for a bit
         Double btcRate = 0.0;
-        String currencyCryptsy = CoinDefinition.cryptsyMarketCurrency;
-        String urlCryptsy = "https://api.coinmarketcap.com/v1/ticker/trumpcoin";
+        String str = "https://api.coinmarketcap.com/v1/ticker/"+CoinDefinition.coinName;
 
         try {
-            // final String currencyCode = currencies[i];
-            final URL URLCryptsy = new URL(urlCryptsy);
-            final HttpURLConnection connectionCryptsy = (HttpURLConnection)URLCryptsy.openConnection();
-            connectionCryptsy.setConnectTimeout(Constants.HTTP_TIMEOUT_MS * 2);
-            connectionCryptsy.setReadTimeout(Constants.HTTP_TIMEOUT_MS * 2);
-            connectionCryptsy.connect();
+            final URL url = new URL(str);
+            final HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setConnectTimeout(Constants.HTTP_TIMEOUT_MS * 2);
+            conn.setReadTimeout(Constants.HTTP_TIMEOUT_MS * 2);
+            conn.connect();
 
-            final StringBuilder contentCryptsy = new StringBuilder();
+            final StringBuilder content = new StringBuilder();
 
             Reader reader = null;
             try
             {
-                reader = new InputStreamReader(new BufferedInputStream(connectionCryptsy.getInputStream(), 1024));
-                Io.copy(reader, contentCryptsy);
-                final JSONArray head = new JSONArray(contentCryptsy.toString());
+                reader = new InputStreamReader(new BufferedInputStream(conn.getInputStream(), 1024));
+                Io.copy(reader, content);
+                final JSONArray head = new JSONArray(content.toString());
                 JSONObject obj = (JSONObject)head.get(0);
                 btcRate = obj.getDouble("price_btc");
             }
@@ -303,65 +300,6 @@ public class ExchangeRatesProvider extends ContentProvider
                     reader.close();
             }
             return btcRate;
-        }
-        catch (final IOException x)
-        {
-            x.printStackTrace();
-        }
-        catch (final JSONException x)
-        {
-            x.printStackTrace();
-        }
-
-        return null;
-    }
-
-    private static Object getCoinValueBTC_BTER()
-    {
-        //final Map<String, ExchangeRate> rates = new TreeMap<String, ExchangeRate>();
-        // Keep the LTC rate around for a bit
-        Double btcRate = 0.0;
-        String currency = CoinDefinition.cryptsyMarketCurrency;
-        String url = "http://data.bter.com/api/1/ticker/"+ CoinDefinition.coinTicker.toLowerCase() + "_" + CoinDefinition.cryptsyMarketCurrency.toLowerCase();
-
-
-
-
-
-        try {
-            // final String currencyCode = currencies[i];
-            final URL URL_bter = new URL(url);
-            final HttpURLConnection connection = (HttpURLConnection)URL_bter.openConnection();
-            connection.setConnectTimeout(Constants.HTTP_TIMEOUT_MS * 2);
-            connection.setReadTimeout(Constants.HTTP_TIMEOUT_MS * 2);
-            connection.connect();
-
-            final StringBuilder content = new StringBuilder();
-
-            Reader reader = null;
-            try
-            {
-                reader = new InputStreamReader(new BufferedInputStream(connection.getInputStream(), 1024));
-                Io.copy(reader, content);
-                final JSONObject head = new JSONObject(content.toString());
-                String result = head.getString("result");
-                if(result.equals("true"))
-                {
-
-                    Double averageTrade = head.getDouble("avg");
-
-
-                    if(currency.equalsIgnoreCase("BTC"))
-                        btcRate = averageTrade;
-                }
-                return btcRate;
-            }
-            finally
-            {
-                if (reader != null)
-                    reader.close();
-            }
-
         }
         catch (final IOException x)
         {
@@ -390,16 +328,10 @@ public class ExchangeRatesProvider extends ContentProvider
             boolean cryptsyValue = true;
             Object result = getCoinValueBTC();
 
-            if(result == null)
-            {
-                result = getCoinValueBTC_BTER();
-                cryptsyValue = false;
-                if(result == null)
-                    return null;
-            }
+            if (result == null) return null;
 
             btcRate = (Double)result;
-
+            btcRate *= 100;
 
 			connection = (HttpURLConnection) url.openConnection();
 

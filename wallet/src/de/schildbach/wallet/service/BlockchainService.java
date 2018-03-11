@@ -23,7 +23,7 @@ import javax.annotation.CheckForNull;
 
 import com.google.bitcoin.core.Peer;
 import com.google.bitcoin.core.StoredBlock;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

@@ -4,7 +4,7 @@
 	<string name="symbol_to">→</string>
 	<string name="symbol_from">←</string>
 	<string name="symbol_internal">⇄</string>
-	<string name="app_name">TrumpCoin</string>
+	<string name="app_name">XP</string>
 
 	<string-array name="preferences_precision_values">
 		<item>8</item>
@@ -12,9 +12,9 @@
 		<item>4</item>
 	</string-array>
 	<string-array name="preferences_precision_labels">
-		<item>TRUMP, 8 digits</item>
-		<item>TRUMP, 6 digits</item>
-		<item>TRUMP, 4 digits</item>
+		<item>XP, 8 digits</item>
+		<item>XP, 6 digits</item>
+		<item>XP, 4 digits</item>
 	</string-array>
 
 </resources>

@@ -49,7 +49,7 @@ import com.google.common.base.Charsets;
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.CrashReporter;
 import de.schildbach.wallet.util.Io;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach

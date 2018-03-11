@@ -6,8 +6,8 @@
 
 	<artifactId>wallet</artifactId>
 	<packaging>apk</packaging>
-	<version>0.2.2</version>
-	<name>TrumpCoin Wallet</name>
+	<version>0.2.6</version>
+	<name>XP Wallet</name>
 
 
 	<parent>
@@ -188,7 +188,7 @@
 						<platform>14</platform>
 					</sdk>
 					<sign>
-						<debug>false</debug>
+						<debug>both</debug>
 					</sign>
 				</configuration>
 			</plugin>

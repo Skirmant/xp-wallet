@@ -27,7 +27,7 @@ import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.params.MainNetParams;
 import com.google.bitcoin.params.TestNet3Params;
 import com.google.bitcoin.core.CoinDefinition;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 /**
  * @author Andreas Schildbach
@@ -154,11 +154,11 @@ public final class Constants
 
     public static final String FORKED_FROM_SOURCE = "based on bitcoin-wallet 3.55\n";
     public static final String FORKED_FROM_SOURCE_BITCOINJ = "based on bitcoinj 0.12\n";
-	public static final String SOURCE_URL = "https://github.com/Skirmant/trumpcoin-wallet";
-	public static final String BINARY_URL = "https://github.com/Skirmant/trumpcoin-wallet/releases";
-	public static final String CREDITS_BITCOINJ_URL = "https://github.com/Skirmant/trumpcoinj";
+	public static final String SOURCE_URL = "https://github.com/Skirmant/xp-wallet";
+	public static final String BINARY_URL = "https://github.com/Skirmant/xp-wallet/releases";
+	public static final String CREDITS_BITCOINJ_URL = "https://github.com/Skirmant/xpj";
 	public static final String CREDITS_ZXING_URL = "http://code.google.com/p/zxing/";
-    public static final String CREDITS_WEBSITE_URL = "http://www.trumpcoin.com/";
+    public static final String CREDITS_WEBSITE_URL = "https://www.xpcoin.io";
     public static final String CREDITS_FORUM_URL = "http://digitalcoin.co/forums/";
 
 	public static final String CREDITS_ICON_URL = "https://bitcointalk.org/index.php?action=profile;u=2062";

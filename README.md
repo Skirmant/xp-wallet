@@ -1,4 +1,4 @@
-Welcome to _TrumpCoin Wallet_, a standalone TrumpCoin payment app for your Android device!
+Welcome to _XP Wallet_, a standalone XP payment app for your Android device!
 
 This project contains several sub-projects:
 

@@ -38,7 +38,7 @@ import com.google.bitcoin.core.ECKey;
 
 import de.schildbach.wallet.Constants;
 import de.schildbach.wallet.util.ViewPagerTabs;
-import cc.trumpcoin.wallet.R;
+import sk.xp.wallet.R;
 
 
 /**
