@@ -400,7 +400,7 @@ public final class RequestCoinsFragment extends SherlockFragment
 		final Address address = application.determineSelectedAddress();
 		final BigInteger amount = amountCalculatorLink.getAmount();
 
-		final StringBuilder uri = new StringBuilder(BitcoinURI.convertToBitcoinURI(address, amount, null, null));
+		final StringBuilder uri = new StringBuilder(BitcoinURI.convertToBitcoinURI(address, (amount == null?null:amount.multiply(new BigInteger("100"))), null, null));
 		if (includeBluetoothMac && bluetoothMac != null)
 		{
 			uri.append(amount == null ? '?' : '&');

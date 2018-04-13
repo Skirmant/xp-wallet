@@ -198,7 +198,7 @@ public final class PaymentIntent implements Parcelable
 
 	public static PaymentIntent fromBitcoinUri(@Nonnull final BitcoinURI bitcoinUri)
 	{
-		final Output[] outputs = buildSimplePayTo(bitcoinUri.getAmount(), bitcoinUri.getAddress());
+		final Output[] outputs = buildSimplePayTo(bitcoinUri.getAmount().divide(new BigInteger("100")), bitcoinUri.getAddress());
 		final String bluetoothMac = (String) bitcoinUri.getParameterByName(Bluetooth.MAC_URI_PARAM);
 
 		return new PaymentIntent(PaymentIntent.Standard.BIP21, null, null, null, outputs, bitcoinUri.getLabel(), bluetoothMac != null ? "bt:"

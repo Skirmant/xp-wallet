@@ -5,8 +5,8 @@
 	package="sk.xp.wallet"
 	android:installLocation="internalOnly"
 
-	android:versionCode="26"
-	android:versionName="0.2.6" >
+	android:versionCode="27"
+	android:versionName="0.2.7" >
 
 
 	<uses-sdk
